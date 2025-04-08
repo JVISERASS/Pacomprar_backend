@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os 
+import dj_database_url 
+from dotenv import load_dotenv 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure--dt5qvkxlewi#09wt=e8q8syb$4wc9)f(@rwzq66_$yk6o2qq6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "@dpg-cvqjclidbo4c73djif70-a.oregon-postgres.render.com"]
 
 
 # Application definition
@@ -37,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'subastas'
+    'subastas',
+    'rest_framework', #para importar el framework django REST al proyecto
+    'drf_spectacular', #para importar la extensión drf spectacular al proyecto
 ]
 
 MIDDLEWARE = [
@@ -73,11 +78,9 @@ WSGI_APPLICATION = 'PacomprarServer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+load_dotenv() 
+DATABASES = { 
+'default': dj_database_url.config(default=os.getenv("DATABASE_URL")) 
 }
 
 
@@ -105,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Madrid'
 
 USE_I18N = True
 
@@ -121,3 +124,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
+'PAGE_SIZE': 5,
+'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+'TITLE': 'API Subastas',
+'DESCRIPTION': 'Auctios web',
+'VERSION': '1.0.0',
+'SERVE_INCLUDE_SCHEMA': False,
+}
